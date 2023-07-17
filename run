@@ -1,0 +1,25 @@
+#!/bin/sh
+set -eu
+
+if [ $# -lt 1 ]; then
+  echo 'No task is specified.' >&2
+  exit 1
+fi
+
+cd "$(dirname "$0")"
+
+case $1 in
+  'c'|'configure' )
+    cmake -Bbuild -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake "$(tools/cmake-args)"
+    ;;
+  'b'|'build' )
+    cmake --build build
+    ;;
+  't'|'test' )
+    ctest -V --test-dir build
+    ;;
+  * )
+    echo "Unrecognized task: $1" >&2
+    exit 1
+    ;;
+esac
